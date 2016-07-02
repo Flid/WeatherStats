@@ -9,6 +9,7 @@ from rest_framework.exceptions import APIException
 from rest_framework.generics import GenericAPIView
 
 from weather_stats import exceptions as api_exceptions
+from weather_stats.types import DataWithStatus
 from weather_stats.validators import Invalid
 
 logger = logging.getLogger(__name__)
@@ -60,6 +61,27 @@ class BaseApiView(GenericAPIView):
         # Pretty-print JSON by default.
         context['indent'] = 2
         return context
+
+    def finalize_response(self, request, response, *args, **kwargs):
+        """
+        Override the original method to reformat a response to {status: ... , data: ...}
+        """
+        response = super(BaseApiView, self).finalize_response(
+            request,
+            response,
+            *args,
+            **kwargs
+        )
+
+        data = response.data
+
+        if isinstance(data, (DataWithStatus, basestring)):
+            # Status is already assigned.
+            return response
+
+        response.data = DataWithStatus('ok', data=response.data)
+
+        return response
 
 
 def custom_error_handler(status_code, error_code):

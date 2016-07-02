@@ -31,16 +31,19 @@ class WeatherHistoryAPI(object):
         }
 
         for day in data['data']['weather']:
+            hourly = day['hourly'][0]
+
             output['days'].append({
-                'temp_min': int(day['mintempC']),
-                'temp_max': int(day['maxtempC']),
-                'humidity': int(day['hourly'][0]['humidity']),
+                'temperature': int(hourly['tempC']),
+                'humidity': int(hourly['humidity']),
+                'pressure': int(hourly['pressure']),
                 'date_str': day['date'],
             })
 
         return output
 
     def get_history_data(self, location, date_start, date_end):
+        # TODO - pagination
         url = furl(self.BASE_URL)
 
         url.args.update({

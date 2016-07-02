@@ -158,15 +158,15 @@ class HistoryDataTestCase(BaseUnitTestCase):
                 'days': [
                     {
                         'date_str': '2016-01-01',
-                        'temp_max': 8,
+                        'temperature': 8,
                         'humidity': 77,
-                        'temp_min': 7,
+                        'pressure': 1020,
                     },
                     {
                         'date_str': '2016-01-02',
-                        'temp_max': 10,
+                        'temperature': 10,
                         'humidity': 80,
-                        'temp_min': 2,
+                        'pressure': 998,
                     },
                 ],
             },

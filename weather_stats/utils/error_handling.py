@@ -12,6 +12,7 @@ from rest_framework.status import (
 )
 
 from weather_stats.exceptions import BaseApiError
+from weather_stats.types import DataWithStatus
 
 logger = logging.getLogger(__name__)
 
@@ -36,17 +37,6 @@ def exception_handler(exc, context):
     if isinstance(exc, BaseApiError):
         response_data.update(exc.format_exc())
         status = exc.status_code
-    elif isinstance(exc, rest_exceptions.APIException):
-        response_data['error_code'] = REST_EXCEPTIONS_TO_CODES.get(
-            exc.__class__,
-            'external',
-        )
-
-        message = exc.detail or exc.default_detail
-        if message:
-            response_data['message'] = message
-
-        status = exc.status_code
 
     if is_server_error(status):
         logger.critical('Internal API exception', exc_info=exc)
@@ -59,7 +49,7 @@ def exception_handler(exc, context):
         response_data['error_code'],
     )
 
-    return Response(dict(
-        status='error',
-        **response_data)
+    return Response(
+        DataWithStatus('error', **response_data),
+        status=status,
     )
