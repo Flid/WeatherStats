@@ -1,0 +1,16 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+from .base import *
+
+SECRET_KEY = 'type_something_here'  # must be changed!
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'weather_stats',
+        'USER': '<USER>',
+        'PASSWORD': '<PASSWORD>',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    },
+}
