@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 import os
 
 from .log import LOGGING
@@ -9,7 +10,6 @@ ALLOWED_HOSTS = ['*']
 PRODUCTION = False
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-api_dir = lambda x: os.path.join(BASE_DIR, x)
 
 ROOT_URLCONF = 'proj.urls'
 
@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     b'django.contrib.staticfiles',
     b'django.contrib.messages',
     b'rest_framework',
+    b'rest_framework_swagger',
     b'weather_stats',
 ]
 
@@ -63,3 +64,26 @@ STATIC_URL = '/static/'
 STATIC_ROOT = ''
 
 SITE_ID = 1
+
+
+SWAGGER_SETTINGS = {
+    'api_version': '1',
+    'api_path': '/',
+    'enabled_methods': [
+        'get',
+        'post',
+        'put',
+        'patch',
+        'delete'
+    ],
+    'api_key': '',
+    'is_authenticated': False,
+    'is_superuser': False,
+    'permission_denied_handler': None,
+    'resource_access_handler': None,
+    'base_path': 'weather-stats.com',
+    'info': {
+        'title': 'Weather Stats API',
+    },
+    'doc_expansion': 'full',
+}

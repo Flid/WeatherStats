@@ -5,6 +5,7 @@ from django.conf.urls import include, url
 
 urlpatterns = [
     url(r'^api/', include('weather_stats.urls', namespace='weather_stats')),
+    url(r'', include('rest_framework_swagger.urls')),
 ]
 
 handler400 = 'weather_stats.views.custom_400_handler'
