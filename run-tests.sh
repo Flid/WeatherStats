@@ -12,7 +12,7 @@ fi
 
 if [[ $# -eq 0 ]] || [[ $1 == -* ]]
   then
-    DJANGO_SETTINGS_MODULE=proj.settings.test ./ve/bin/py.test $OPTS $COV_OPTS ./public/tests/ $@
+    DJANGO_SETTINGS_MODULE=proj.settings.test ./ve/bin/py.test $OPTS $COV_OPTS ./weather_stats/tests/ $@
   else
     DJANGO_SETTINGS_MODULE=proj.settings.test ./ve/bin/py.test $OPTS $@
 fi

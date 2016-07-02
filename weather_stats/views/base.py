@@ -4,12 +4,12 @@ from __future__ import unicode_literals
 import logging
 import sys
 
-from django.conf import settings
-from django.http import Http404, JsonResponse
-from rest_framework.generics import GenericAPIView
+from django.http import JsonResponse
 from rest_framework.exceptions import APIException
+from rest_framework.generics import GenericAPIView
 
 from weather_stats import exceptions as api_exceptions
+from weather_stats.validators import Invalid
 
 logger = logging.getLogger(__name__)
 
@@ -32,8 +32,27 @@ class BaseApiView(GenericAPIView):
 
     def validate_forms(self):
         """
-        Process input args, put results into `self.form_values`
+        Check all the data according to forms set,
+        put all the validated data to `self.form_values`.
         """
+        assert self.form_class
+
+        self.form_values = {}
+
+        logger.info('Processing form %s', self.form_class)
+        logger.debug('Input args: %s', self.request.GET)
+
+        try:
+            self.form_values.update(
+                self.form_class().to_python(self.request.GET),
+            )
+        except Invalid as ex:
+            raise api_exceptions.ValidationFailedError(
+                ex,
+                detail='Input args validation failed. Check your request.',
+            )
+
+        logger.info('Forms have been processed successfully.')
 
     def get_renderer_context(self):
         context = super(BaseApiView, self).get_renderer_context()

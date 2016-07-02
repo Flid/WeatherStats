@@ -1,4 +1,7 @@
 # please keep the imports alphabetically sorted
+
 django==1.8.5
 djangorestframework==3.2.3
-yweather==0.1.1
+formencode==1.3.0
+furl==0.5.1
+requests==2.10.0
