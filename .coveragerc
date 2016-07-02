@@ -1,0 +1,13 @@
+[run]
+omit = 
+    weathere_stats/tests/*
+source=weather_stats
+
+[html]
+directory=coverage_report
+
+[report]
+exclude_lines =
+    pragma: no cover
+    if settings\.DEBUG
+    raise NotImplementedError

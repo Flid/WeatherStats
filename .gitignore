@@ -4,3 +4,4 @@ ve
 coverage.xml
 flake8_report.txt
 coverage_report
+*.db

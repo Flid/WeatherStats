@@ -1,4 +1,4 @@
 # please keep the imports alphabetically sorted
 django==1.8.5
 djangorestframework==3.2.3
-requests==2.7.0
+yweather==0.1.1

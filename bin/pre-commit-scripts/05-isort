@@ -1,0 +1,49 @@
+#!/bin/bash
+
+run_isort()
+{
+    FILES=$1
+    ISORT_CONFIG="`pwd`/.isort.cfg"
+    ISORT_CMD="isort -q -cs -sp $ISORT_CONFIG"
+    echo -e "\e[00;33misort checking...\e[00m"
+    FIXED_ERRORS_COUNT=0
+    UNFIXED_ERRORS_COUNT=0
+
+    for file in $FILES; do
+        $ISORT_CMD $file -c &>/dev/null
+        HAS_UNSORTED_IMPORTS=$?
+        if [ $HAS_UNSORTED_IMPORTS -ne 0 ]; then
+            UNSTAGED_CHANGES=$(git diff $file | wc -l)
+            if [ $UNSTAGED_CHANGES -ne 0 ]; then
+                echo -e "\e[00;31m$file: cannot sort imports in place due to unstaged changes.\e[00m"
+                UNFIXED_ERRORS_COUNT=`expr $UNFIXED_ERRORS_COUNT + 1`
+            else
+                $ISORT_CMD -q $file
+                echo -e "\e[00;31m$file: import order fixed in place.\e[00m"
+                FIXED_ERRORS_COUNT=`expr $FIXED_ERRORS_COUNT + 1`
+            fi
+        fi;
+    done;
+
+    RETURN_CODE=0
+    if [ $UNFIXED_ERRORS_COUNT -ne 0 ]; then
+        echo -e "\e[00;31mCheck isort: failed to sort imports in $UNFIXED_ERRORS_COUNT file(s) due to unstaged changes.\e[00m"
+        RETURN_CODE=1
+    fi
+    if [ $FIXED_ERRORS_COUNT -ne 0 ]; then
+        echo -e "\e[00;31mCheck isort: import order fixed in $FIXED_ERRORS_COUNT file(s); add changes and commit again, please.\e[00m"
+        RETURN_CODE=1
+    fi
+    if [ $RETURN_CODE -eq 0 ]; then
+        echo -e "\e[00;32mCheck isort: OK!\e[00m"
+    fi
+    echo ""
+    return $RETURN_CODE
+}
+
+CHANGES=$(git diff --name-only --cached --diff-filter="ACM" | grep -E ".py$")
+if [ -z "$CHANGES" ]; then
+    exit 0
+fi
+
+run_isort "$CHANGES"

@@ -1,0 +1,40 @@
+#!/bin/bash
+
+run_checker()
+{
+    FILES=$1
+    FLAKE8_CONFIG="`pwd`/.flake8.cfg"
+    CHECKER_CMD="flake8 --config=$FLAKE8_CONFIG /dev/stdin"
+
+    echo -e "\e[00;33mflake8 checking...\e[00m"
+    ERRORS=0
+    for file in $FILES; do
+        COUNT_LINES=$(git cat-file blob $(git ls-files -s $file | awk '{print $2}') | $CHECKER_CMD 2>&1 | wc -l)
+        if [ $COUNT_LINES -ne 0 ]; then
+            git cat-file blob $(git ls-files -s $file | awk '{print $2}') | $CHECKER_CMD 2>&1 | sed -r "s,^<?/dev/stdin>?|^\(standard input\),  ${file},"
+            ERRORS=`expr $ERRORS + $COUNT_LINES`
+        fi;
+    done;
+
+    if [ $ERRORS -ne 0 ]; then
+        echo -e "\e[00;31mCheck flake8: $ERRORS errors\e[00m\n"
+    else
+        echo -e "\e[00;32mCheck flake8: OK!\e[00m\n"
+    fi
+    return $ERRORS
+}
+
+CHANGES=$(git diff --name-only --cached --diff-filter="ACM" | grep -E ".py$")
+if [ -z "$CHANGES" ]; then
+    exit 0
+fi
+
+EXIT_CODE=0
+
+run_checker "$CHANGES"
+FLAKE8_ERRORS=$?
+if [ $FLAKE8_ERRORS -ne 0 ]; then
+   EXIT_CODE=1
+fi
+
+exit $EXIT_CODE
