@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from datetime import date
 from functools import wraps
 
 from formencode.declarative import singletonmethod
@@ -62,14 +61,6 @@ class Pipeline(FancyValidator):
             value = validator.to_python(value, state)
 
         return value
-
-
-ParsingDateValidator = Pipeline(
-    DateConverter(),
-
-    # Pass callable here, so date is reevaluated every time
-    DateValidator(latest_date=date.today),
-)
 
 
 class GTEValidator(FancyValidator):

@@ -10,6 +10,10 @@ from .base import BaseApiView
 
 
 class ReadStatsView(BaseApiView):
+    """
+    Calculate min/max/average/median temperature/humidity/pressure
+    for a given location over some period of time.
+    """
     form_class = WeatherStatsShowForm
 
     def get(self, request):

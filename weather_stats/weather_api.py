@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 import logging
+from datetime import date
 
 import requests
 from django.conf import settings
@@ -42,8 +43,12 @@ class WeatherHistoryAPI(object):
 
         return output
 
-    def get_history_data(self, location, date_start, date_end):
-        # TODO - pagination
+    def _get_history_data(self, location, date_start, date_end):
+        """
+        Requests API and returns the parsed response.
+        Difference between start and end date should e less than
+        30 days because of API limitation.
+        """
         url = furl(self.BASE_URL)
 
         url.args.update({
@@ -67,3 +72,26 @@ class WeatherHistoryAPI(object):
         except KeyError as ex:
             log.error('Failed to parse weather api response: %s', data, exc_info=ex)
             raise WeatherAPIException()
+
+    def get_history_data(self, location, date_start, date_end):
+        start_ord = date_start.toordinal()
+        end_ord = date_end.toordinal()
+
+        step = 30
+        output = {}
+
+        while start_ord <= end_ord:
+            # TODO - it would be even better to make requests simultaneously
+            response = self._get_history_data(
+                location,
+                date.fromordinal(start_ord),
+                date.fromordinal(min(end_ord, start_ord + step)),
+            )
+
+            output['location'] = response['location']
+            output.setdefault('days', []).extend(response['days'])
+
+            # We've already processed day `start_ord + step`, so add 1 here
+            start_ord += step + 1
+
+        return output

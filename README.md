@@ -27,7 +27,3 @@ Run dev server:
 $ ./run-server.sh
 ```
 
-
-## Things still missing
-
-* Throttling

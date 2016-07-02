@@ -19,15 +19,6 @@ class BaseApiError(rest_exceptions.APIException):
     def __init__(self, detail=None):
         self.detail = detail
 
-    def format_exc(self):
-        error_data = {'error_code': self.code}
-
-        detail = self.detail or self.default_detail
-        if detail is not None:
-            error_data['message'] = detail
-
-        return error_data
-
 
 class InternalApiError(BaseApiError):
     status_code = HTTP_500_INTERNAL_SERVER_ERROR

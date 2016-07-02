@@ -208,3 +208,30 @@ class HistoryDataTestCase(BaseUnitTestCase):
                 date(2016, 1, 1),
                 date(2016, 1, 2),
             )
+
+    def test_pagination(self):
+
+        def _get_fake_response(loc, start, end):
+            return {
+                'location': 'loc',
+                'days': [{} for _ in range((end - start).days + 1)],
+            }
+
+        single_request_mock = Mock(side_effect=_get_fake_response)
+
+        single_request_patch = patch(
+            'weather_stats.weather_api.WeatherHistoryAPI._get_history_data',
+            single_request_mock,
+        )
+
+        with single_request_patch:
+            response = self.api_client.get_history_data(
+                'loc',
+                date(2000, 1, 1),
+                date(2001, 1, 1),
+            )
+
+        self.assertEqual(single_request_mock.call_count, 12)
+
+        # 367 - leap year (365) plus one day of next year
+        self.assertEqual(len(response['days']), 367)
