@@ -1,3 +1,7 @@
+## What Is That?
+I wrote it long ago as a part of take-home test. The goal is to write an API, which calls some existing weather API and returns you some useful statistics for a given location and given period of time.
+It can be used as a skeleton for a new API, it has everything you need: error handling, request form validation, response serialization, pre-commit hooks for isort and flake8, etc.
+
 ## Installation
 
 ```
